@@ -2,7 +2,7 @@
 // app's name. Right: battery, a control dot, and a live-updating clock.
 import { useEffect, useState } from 'react'
 import { useWindowManager } from '../windowManager.jsx'
-import { APPS_BY_ID } from '../data/apps.jsx'
+import { WINDOWS_BY_ID } from '../data/apps.jsx'
 import { BatteryIcon, ControlIcon } from './icons.jsx'
 
 function useClock() {
@@ -19,7 +19,7 @@ function useClock() {
 export default function MenuBar() {
   const { focusedId } = useWindowManager()
   const clock = useClock()
-  const activeTitle = focusedId ? APPS_BY_ID[focusedId]?.title : null
+  const activeTitle = focusedId ? WINDOWS_BY_ID[focusedId]?.title : null
 
   return (
     <div className="fixed inset-x-0 top-0 z-50 flex h-7 items-center justify-between border-b border-black/5 bg-white/55 px-4 text-[13px] backdrop-blur-md">

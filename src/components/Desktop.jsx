@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useWindowManager } from '../windowManager.jsx'
-import { APPS_BY_ID } from '../data/apps.jsx'
+import { WINDOWS_BY_ID } from '../data/apps.jsx'
 import MenuBar from './MenuBar.jsx'
 import Dock from './Dock.jsx'
 import Window from './Window.jsx'
@@ -29,7 +29,7 @@ export default function Desktop() {
       <div ref={constraintsRef} className="absolute inset-x-0 bottom-0 top-7">
         <AnimatePresence>
           {windows.map((w) => {
-            const app = APPS_BY_ID[w.id]
+            const app = WINDOWS_BY_ID[w.id]
             if (!app) return null
             return (
               <Window
