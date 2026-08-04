@@ -10,12 +10,14 @@
 //   liveUrl     public link (deployed only)
 //   githubUrl   repo link
 //   tech        tech-stack chips
+//   comingSoon  true → project isn't public yet; the detail window shows a
+//               "Coming soon" badge instead of link buttons
 //
-// ⚠️ GAPS from content.md — placeholders below, need David's real values:
-//   • No GitHub URLs were provided for any project  → githubUrl: '#'
-//   • No live URLs were provided for deployed ones   → liveUrl: '#'
-//   • No tech stacks were provided                   → `tech` is INFERRED from
-//     each description and marked TODO; confirm/replace.
+// A null liveUrl/githubUrl renders as an inert "no link yet" chip rather than a
+// dead-looking button (see components/apps/ProjectDetail.jsx).
+//
+// ⚠️ REMAINING GAP: no tech stacks were provided, so every `tech` array below is
+// INFERRED from the description and marked TODO — confirm/replace.
 export const projects = [
   {
     id: 'designd',
@@ -26,8 +28,8 @@ export const projects = [
       'with a 3D floor plan editor built in.',
     deployed: true,
     screenshot: '/screenshots/designd-1.jpg',
-    liveUrl: '#', // TODO: real deployed URL
-    githubUrl: '#', // TODO: real repo URL
+    liveUrl: 'https://design-d-umber.vercel.app/',
+    githubUrl: 'https://github.com/dmoreno0716/DesignD',
     tech: ['React', 'Three.js', 'AI'], // TODO: confirm — inferred
   },
   {
@@ -41,7 +43,7 @@ export const projects = [
     deployed: false,
     screenshot: null,
     liveUrl: null,
-    githubUrl: '#', // TODO: real repo URL
+    githubUrl: 'https://github.com/dmoreno0716/Day-Trader',
     tech: ['Python', 'AI', 'Market APIs'], // TODO: confirm — inferred
   },
   {
@@ -55,8 +57,8 @@ export const projects = [
       'feel, like the order of screens or visual changes.',
     deployed: true,
     screenshot: '/screenshots/ai-quiz-1.jpg',
-    liveUrl: '#', // TODO: real deployed URL
-    githubUrl: '#', // TODO: real repo URL
+    liveUrl: 'https://olive-intern-assessment-kappa.vercel.app/studio',
+    githubUrl: 'https://github.com/dmoreno0716/olive-intern-assessment',
     tech: ['React', 'AI', 'Node'], // TODO: confirm — inferred
   },
   {
@@ -68,12 +70,14 @@ export const projects = [
       'The store page handles quotes, communication with employees for direct ' +
       'assistance, and quantity handling, so information is direct and not ' +
       'staggered between ordering and creating.',
-    // Not deployed yet ("will be deployed soon"), so treated as repo-only.
+    // Still being built — no public site and no public repo yet, so the detail
+    // window shows a "Coming soon" badge instead of link buttons.
     deployed: false,
+    comingSoon: true,
     screenshot: null,
     liveUrl: null,
-    githubUrl: '#', // TODO: real repo URL
+    githubUrl: null,
     tech: ['React', 'E-commerce'], // TODO: confirm — inferred
-    note: 'Deploying soon',
+    note: 'Coming soon',
   },
 ]

@@ -12,11 +12,16 @@ export default function Dock() {
   const { open, isOpen } = useWindowManager()
 
   return (
+    // The positioning wrapper spans the full viewport width so the dock can be
+    // centered, but it is *invisible* — without pointer-events-none it would sit
+    // at z-40 across the whole bottom of the screen and swallow clicks on any
+    // window content underneath it (which is exactly what killed the project
+    // Live/GitHub links). Only the visible panel below takes pointer events.
     <nav
       aria-label="Dock"
-      className="fixed inset-x-0 bottom-4 z-40 flex justify-center"
+      className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center"
     >
-      <ul className="flex items-end gap-1.5 rounded-2xl border border-white/60 bg-white/55 p-2 shadow-[0_16px_40px_-16px_rgba(24,24,27,0.35)] backdrop-blur-xl">
+      <ul className="pointer-events-auto flex items-end gap-1.5 rounded-2xl border border-white/60 bg-white/55 p-2 shadow-[0_16px_40px_-16px_rgba(24,24,27,0.35)] backdrop-blur-xl">
         {APPS.map((app) => {
           const Icon = app.icon
           const active = isOpen(app.id)
