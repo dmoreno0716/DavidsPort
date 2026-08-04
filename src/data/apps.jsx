@@ -58,6 +58,7 @@ export const APPS = [
   {
     id: 'nowplaying',
     label: 'Now Playing',
+    short: 'Now', // compact label for the mobile tab bar
     title: 'Now Playing',
     icon: MusicIcon,
     width: 420,

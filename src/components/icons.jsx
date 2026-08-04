@@ -123,3 +123,21 @@ export function CodeIcon(props) {
     </svg>
   )
 }
+
+// Close (X) — used on mobile top-level sheet headers.
+export function CloseIcon(props) {
+  return (
+    <svg {...base} width={22} height={22} {...props}>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  )
+}
+
+// Back chevron — used on mobile project-detail sheet headers to return to Projects.
+export function ChevronLeftIcon(props) {
+  return (
+    <svg {...base} width={24} height={24} {...props}>
+      <path d="M15 5l-7 7 7 7" />
+    </svg>
+  )
+}
