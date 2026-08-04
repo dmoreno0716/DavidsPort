@@ -13,13 +13,18 @@ export default function ProjectDetail({ project }) {
 
   return (
     <div className="space-y-4">
+      {/* aspect-[16/9] + intrinsic width/height reserve the box before the
+          image decodes, so opening the window doesn't shift the text below. */}
       {deployed && screenshot && (
-        <div className="overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
+        <div className="aspect-[16/9] overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
           <img
             src={screenshot}
-            alt={`${title} screenshot`}
-            className="w-full object-cover"
+            alt={`Screenshot of ${title}`}
+            width={1400}
+            height={781}
+            className="h-full w-full object-cover object-left-top"
             loading="lazy"
+            decoding="async"
           />
         </div>
       )}

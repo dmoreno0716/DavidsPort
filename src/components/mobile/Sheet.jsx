@@ -4,12 +4,21 @@
 // Each has a header (title + a close/back control) and animates in with a quick
 // slide + fade. Project-detail sheets show a back chevron (returns to Projects);
 // all other sheets show a close (X).
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { WINDOWS_BY_ID } from '../../data/apps.jsx'
 import { CloseIcon, ChevronLeftIcon } from '../icons.jsx'
 
 export default function Sheet({ id, onClose }) {
+  const ref = useRef(null)
   const app = WINDOWS_BY_ID[id]
+
+  // Focus the sheet when it opens so screen-reader/keyboard users are moved
+  // into the new view instead of being left on the tab bar behind it.
+  useEffect(() => {
+    ref.current?.focus({ preventScroll: true })
+  }, [id])
+
   if (!app) return null
 
   const isProject = id.startsWith('project:')
@@ -17,6 +26,12 @@ export default function Sheet({ id, onClose }) {
 
   return (
     <motion.div
+      ref={ref}
+      role="dialog"
+      aria-modal="false"
+      aria-label={title}
+      tabIndex={-1}
+      data-window
       className="fixed inset-x-0 bottom-16 top-7 z-30 flex flex-col bg-white"
       initial={{ opacity: 0, x: '6%' }}
       animate={{ opacity: 1, x: 0 }}
@@ -26,8 +41,9 @@ export default function Sheet({ id, onClose }) {
       {/* Sheet header */}
       <div className="relative flex h-12 shrink-0 items-center justify-center border-b border-zinc-100 px-2">
         <button
+          type="button"
           onClick={onClose}
-          aria-label={isProject ? 'Back to Projects' : 'Close'}
+          aria-label={isProject ? 'Back to Projects' : `Close ${title}`}
           className="absolute left-1 flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 active:bg-zinc-100"
         >
           {isProject ? <ChevronLeftIcon /> : <CloseIcon />}

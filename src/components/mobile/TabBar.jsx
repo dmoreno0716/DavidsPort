@@ -33,6 +33,7 @@ export default function TabBar() {
         return (
           <button
             key={app.id}
+            type="button"
             onClick={() => selectTab(app.id)}
             aria-label={app.label}
             aria-current={active ? 'page' : undefined}

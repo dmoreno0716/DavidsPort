@@ -25,7 +25,7 @@ export const projects = [
       'Interior designer with built-in AI to redesign any room you want, ' +
       'with a 3D floor plan editor built in.',
     deployed: true,
-    screenshot: '/screenshots/DesignD-screenshots/image.png',
+    screenshot: '/screenshots/designd-1.jpg',
     liveUrl: '#', // TODO: real deployed URL
     githubUrl: '#', // TODO: real repo URL
     tech: ['React', 'Three.js', 'AI'], // TODO: confirm — inferred
@@ -54,7 +54,7 @@ export const projects = [
       'tweak them — from changing a few words in-line to reworking the whole ' +
       'feel, like the order of screens or visual changes.',
     deployed: true,
-    screenshot: '/screenshots/Ai-Quiz-screenshots/image.png',
+    screenshot: '/screenshots/ai-quiz-1.jpg',
     liveUrl: '#', // TODO: real deployed URL
     githubUrl: '#', // TODO: real repo URL
     tech: ['React', 'AI', 'Node'], // TODO: confirm — inferred

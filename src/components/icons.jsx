@@ -1,6 +1,11 @@
 // Neutral line icons used in the dock and menu bar.
 // All use `currentColor` so the parent controls color, and a 1.5 stroke to
 // match the light, thin aesthetic of the design.
+//
+// Every icon here is decorative: the button or link wrapping it carries the
+// accessible name (aria-label or visible text), so the svg is hidden from
+// assistive tech to avoid a doubled-up announcement. `base` is spread first, so
+// a caller that needs a labelled icon can still pass aria-hidden={false}.
 
 const base = {
   width: 20,
@@ -11,6 +16,8 @@ const base = {
   strokeWidth: 1.6,
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
+  'aria-hidden': true,
+  focusable: false,
 }
 
 export function PersonIcon(props) {

@@ -56,12 +56,20 @@ export default function Contact() {
           {profile.email}
         </span>
         <button
+          type="button"
           onClick={copy}
+          aria-label={`Copy email address ${profile.email}`}
           className="shrink-0 rounded-md bg-amber-500 px-3 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-amber-600"
         >
           {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
+
+      {/* The button's own label doesn't change for screen readers, so announce
+          the result here instead. */}
+      <span role="status" className="sr-only">
+        {copied ? 'Email address copied to clipboard' : ''}
+      </span>
     </div>
   )
 }

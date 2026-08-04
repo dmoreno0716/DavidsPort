@@ -15,7 +15,9 @@ export default function Projects() {
       {projects.map((p) => (
         <button
           key={p.id}
+          type="button"
           onClick={() => open(`project:${p.id}`)}
+          aria-label={`${p.title} — ${p.tagline}`}
           className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left ring-1 ring-black/5 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(24,24,27,0.28)]"
         >
           {/* Thumbnail */}
@@ -23,9 +25,12 @@ export default function Projects() {
             {p.deployed && p.screenshot ? (
               <img
                 src={p.screenshot}
-                alt={`${p.title} screenshot`}
+                alt=""
+                width={1400}
+                height={781}
                 className="h-full w-full object-cover object-left-top transition-transform duration-200 group-hover:scale-[1.03]"
                 loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 text-zinc-400">

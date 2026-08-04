@@ -3,7 +3,7 @@
 // single full-screen sheet + bottom tab bar. The desktop path is unchanged from
 // before; the mobile path (below the md breakpoint) swaps in Sheet + TabBar and
 // never mounts the draggable Window, so dragging is disabled on phones.
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useWindowManager } from '../windowManager.jsx'
 import { useIsMobile } from '../useIsMobile.js'
@@ -27,6 +27,18 @@ export default function Desktop() {
   const { windows, focusedId, zIndexOf, focus, close } = useWindowManager()
   const isMobile = useIsMobile()
   const constraintsRef = useRef(null)
+
+  // Esc closes the focused window (or, on phones, the visible sheet). Bound on
+  // the document rather than the window element so it fires wherever focus sits
+  // — inside the window body, on the dock, or nowhere in particular.
+  useEffect(() => {
+    if (!focusedId) return
+    function onKeyDown(e) {
+      if (e.key === 'Escape') close(focusedId)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [focusedId, close])
 
   return (
     <div className="relative h-screen w-screen overflow-hidden" style={wallpaper}>

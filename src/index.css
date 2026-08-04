@@ -6,3 +6,33 @@ body,
   height: 100%;
   margin: 0;
 }
+
+/* Visible focus for keyboard users everywhere, in the amber accent used by the
+   rest of the UI. `:focus-visible` (not `:focus`) so mouse clicks stay clean.
+   Modern browsers follow the element's border-radius, so this reads correctly
+   on the rounded buttons, tiles, and windows. */
+:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* Windows/sheets take focus programmatically when they open so keyboard users
+   land inside them. That's a context cue, not a control, so it skips the ring —
+   the interactive things inside it still get one. */
+[data-window]:focus-visible {
+  outline: none;
+}
+
+/* Respect the OS "reduce motion" setting for CSS transitions. Framer Motion's
+   JS-driven animations are handled separately, by
+   <MotionConfig reducedMotion="user"> in App.jsx. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
