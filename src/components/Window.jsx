@@ -11,6 +11,13 @@
 import { useEffect, useRef } from 'react'
 import { motion, useMotionValue, useDragControls } from 'framer-motion'
 
+// Vertical space the chrome reserves: the menu bar above the window layer, and
+// the floating dock at the bottom. A window is capped so it can never render
+// content into the band the dock covers — content there looks fine but is
+// physically unclickable, since the dock floats above the window layer.
+const MENU_BAR_PX = 28 // .top-7 on the window layer
+const DOCK_ZONE_PX = 96 // dock panel (~70px) + its bottom-4 offset + breathing room
+
 export default function Window({ app, spawn, focused, zIndex, constraintsRef, onFocus, onClose }) {
   const controls = useDragControls()
   // Persist position across re-renders/focus changes via motion values.
@@ -34,12 +41,13 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
       aria-label={title}
       tabIndex={-1}
       data-window
-      className="absolute left-0 top-0 select-none rounded-xl bg-white ring-1 ring-black/5"
+      className="absolute left-0 top-0 flex select-none flex-col rounded-xl bg-white ring-1 ring-black/5"
       style={{
         x,
         y,
         width,
         zIndex,
+        maxHeight: `calc(100vh - ${MENU_BAR_PX + spawn.y + DOCK_ZONE_PX}px)`,
         boxShadow: focused
           ? '0 18px 50px -12px rgba(24,24,27,0.28), 0 6px 16px -8px rgba(24,24,27,0.20)'
           : '0 12px 34px -14px rgba(24,24,27,0.20)',
@@ -65,7 +73,7 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
 
       {/* Title bar — drag handle */}
       <div
-        className="flex h-9 cursor-default items-center rounded-t-xl border-b border-zinc-100 bg-zinc-50/80 px-3"
+        className="flex h-9 shrink-0 cursor-default items-center rounded-t-xl border-b border-zinc-100 bg-zinc-50/80 px-3"
         onPointerDown={(e) => controls.start(e)}
       >
         {/* Custom window controls (neutral, not Apple's colors) */}
@@ -86,8 +94,9 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
         </span>
       </div>
 
-      {/* Body */}
-      <div className="p-5">
+      {/* Body — scrolls if the content is taller than the capped window, so
+          nothing ends up stranded underneath the dock. */}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
         <Content />
       </div>
     </motion.div>
