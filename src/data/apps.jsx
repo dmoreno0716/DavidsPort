@@ -1,10 +1,11 @@
-// Registry of "apps" — each maps a dock entry to a window.
-//   id      unique key, used everywhere in the window manager
-//   label   dock tooltip
-//   title   text shown in the menu bar + window title bar
-//   icon    dock/menu icon component
-//   width   window width in px
-//   Content placeholder body (real content comes in a later phase)
+// Window registry.
+//
+// `APPS`         — the five entries shown in the dock, each opens a window.
+// `WINDOWS_BY_ID`— every openable window keyed by id: the five dock apps PLUS
+//                  one detail window per project (id `project:<id>`). The window
+//                  manager and Desktop resolve any open window through this map,
+//                  so project detail windows behave like any other window
+//                  (focus, z-order, staggered spawn, no duplicates).
 import {
   PersonIcon,
   FolderIcon,
@@ -12,91 +13,68 @@ import {
   MailIcon,
   MusicIcon,
 } from '../components/icons.jsx'
+import About from '../components/apps/About.jsx'
+import Projects from '../components/apps/Projects.jsx'
+import ProjectDetail from '../components/apps/ProjectDetail.jsx'
+import Resume from '../components/apps/Resume.jsx'
+import Contact from '../components/apps/Contact.jsx'
+import NowPlaying from '../components/apps/NowPlaying.jsx'
+import { projects } from './projects.js'
 
-function Placeholder({ children }) {
-  return (
-    <div className="space-y-3 text-[13px] leading-relaxed text-zinc-500">
-      {children}
-      <div className="space-y-2 pt-1">
-        <div className="h-2 w-full rounded-full bg-zinc-100" />
-        <div className="h-2 w-11/12 rounded-full bg-zinc-100" />
-        <div className="h-2 w-4/5 rounded-full bg-zinc-100" />
-      </div>
-    </div>
-  )
-}
-
+// Dock apps.
 export const APPS = [
   {
     id: 'about',
     label: 'About',
     title: 'About David',
     icon: PersonIcon,
-    width: 360,
-    Content: () => (
-      <Placeholder>
-        <p className="text-zinc-600">
-          Placeholder for the About window — intro, role, and a short bio.
-        </p>
-      </Placeholder>
-    ),
+    width: 380,
+    Content: About,
   },
   {
     id: 'projects',
     label: 'Projects',
     title: 'Projects',
     icon: FolderIcon,
-    width: 380,
-    Content: () => (
-      <Placeholder>
-        <p className="text-zinc-600">
-          Placeholder for the Projects window — cards with screenshots and links.
-        </p>
-      </Placeholder>
-    ),
+    width: 560,
+    Content: Projects,
   },
   {
     id: 'resume',
     label: 'Resume',
     title: 'Resume',
     icon: DocumentIcon,
-    width: 360,
-    Content: () => (
-      <Placeholder>
-        <p className="text-zinc-600">
-          Placeholder for the Resume window — embedded PDF and a download link.
-        </p>
-      </Placeholder>
-    ),
+    width: 480,
+    Content: Resume,
   },
   {
     id: 'contact',
     label: 'Contact',
     title: 'Contact',
     icon: MailIcon,
-    width: 340,
-    Content: () => (
-      <Placeholder>
-        <p className="text-zinc-600">
-          Placeholder for the Contact window — email and social links.
-        </p>
-      </Placeholder>
-    ),
+    width: 360,
+    Content: Contact,
   },
   {
     id: 'nowplaying',
     label: 'Now Playing',
+    short: 'Now', // compact label for the mobile tab bar
     title: 'Now Playing',
     icon: MusicIcon,
-    width: 340,
-    Content: () => (
-      <Placeholder>
-        <p className="text-zinc-600">
-          Placeholder for the Now Playing window — embedded Spotify playlist.
-        </p>
-      </Placeholder>
-    ),
+    width: 420,
+    Content: NowPlaying,
   },
 ]
 
-export const APPS_BY_ID = Object.fromEntries(APPS.map((a) => [a.id, a]))
+// One detail window per project. Not shown in the dock — opened from the
+// Projects grid via open(`project:<id>`).
+const PROJECT_WINDOWS = projects.map((p) => ({
+  id: `project:${p.id}`,
+  title: p.title,
+  width: 460,
+  Content: () => <ProjectDetail project={p} />,
+}))
+
+export const WINDOWS_BY_ID = Object.fromEntries(
+  [...APPS, ...PROJECT_WINDOWS].map((w) => [w.id, w]),
+)

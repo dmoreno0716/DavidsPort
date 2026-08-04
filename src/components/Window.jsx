@@ -2,6 +2,13 @@
 // (via dragControls), constrained to the desktop area. Clicking anywhere on the
 // window focuses it; the focused window is fully opaque with a thin amber top
 // accent, while unfocused windows dim slightly.
+//
+// Keyboard: the window is a labelled, focusable non-modal dialog. It takes
+// focus when it opens, so Tab continues into its content rather than jumping
+// back to the dock; tabbing into a background window raises it (onFocusCapture).
+// Esc closes the focused window — handled globally in Desktop.jsx so it works
+// no matter which element inside has focus.
+import { useEffect, useRef } from 'react'
 import { motion, useMotionValue, useDragControls } from 'framer-motion'
 
 export default function Window({ app, spawn, focused, zIndex, constraintsRef, onFocus, onClose }) {
@@ -9,11 +16,24 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
   // Persist position across re-renders/focus changes via motion values.
   const x = useMotionValue(spawn.x)
   const y = useMotionValue(spawn.y)
+  const ref = useRef(null)
 
   const { title, width, Content } = app
 
+  // Move focus into the window when it opens. preventScroll keeps the desktop
+  // from jumping if the window spawns near an edge.
+  useEffect(() => {
+    ref.current?.focus({ preventScroll: true })
+  }, [])
+
   return (
     <motion.div
+      ref={ref}
+      role="dialog"
+      aria-modal="false"
+      aria-label={title}
+      tabIndex={-1}
+      data-window
       className="absolute left-0 top-0 select-none rounded-xl bg-white ring-1 ring-black/5"
       style={{
         x,
@@ -31,6 +51,7 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
       dragMomentum={false}
       dragElastic={0}
       onPointerDown={onFocus}
+      onFocusCapture={onFocus}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: focused ? 1 : 0.9, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
@@ -50,13 +71,14 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
         {/* Custom window controls (neutral, not Apple's colors) */}
         <div className="flex items-center gap-2">
           <button
-            aria-label="Close window"
+            type="button"
+            aria-label={`Close ${title}`}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onClose}
             className="h-3 w-3 rounded-full bg-zinc-300 transition-colors hover:bg-zinc-400"
           />
-          <span className="h-3 w-3 rounded-full bg-zinc-300" />
-          <span className="h-3 w-3 rounded-full bg-zinc-300" />
+          <span aria-hidden="true" className="h-3 w-3 rounded-full bg-zinc-300" />
+          <span aria-hidden="true" className="h-3 w-3 rounded-full bg-zinc-300" />
         </div>
 
         <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-[13px] font-medium text-zinc-500">
