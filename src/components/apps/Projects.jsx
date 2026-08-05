@@ -11,7 +11,9 @@ export default function Projects() {
   const { open } = useWindowManager()
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    // auto-fill rather than a fixed 2 columns, so the grid reflows as the
+    // window is resized: one column when narrow, three or more when wide.
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(190px,1fr))] gap-3">
       {projects.map((p) => (
         <button
           key={p.id}

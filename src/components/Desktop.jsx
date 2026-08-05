@@ -18,7 +18,7 @@ import Sheet from './mobile/Sheet.jsx'
 import TabBar from './mobile/TabBar.jsx'
 
 export default function Desktop() {
-  const { windows, focusedId, zIndexOf, focus, close } = useWindowManager()
+  const { windows, focusedId, zIndexOf, focus, close, resize } = useWindowManager()
   const isMobile = useIsMobile()
   const { activeId, mountedIds, isDark } = useWallpaper()
   const constraintsRef = useRef(null)
@@ -98,11 +98,13 @@ export default function Desktop() {
                   key={w.id}
                   app={app}
                   spawn={{ x: w.x, y: w.y }}
+                  size={{ w: w.w, h: w.h }}
                   focused={focusedId === w.id}
                   zIndex={zIndexOf(w.id) + 1}
                   constraintsRef={constraintsRef}
                   onFocus={() => focus(w.id)}
                   onClose={() => close(w.id)}
+                  onResize={(next) => resize(w.id, next)}
                 />
               )
             })}

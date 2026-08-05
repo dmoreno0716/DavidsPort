@@ -29,6 +29,8 @@ export const APPS = [
     title: 'About David',
     icon: PersonIcon,
     width: 380,
+    minWidth: 320,
+    minHeight: 240,
     Content: About,
   },
   {
@@ -37,6 +39,8 @@ export const APPS = [
     title: 'Projects',
     icon: FolderIcon,
     width: 560,
+    minWidth: 420,
+    minHeight: 320,
     Content: Projects,
   },
   {
@@ -45,6 +49,8 @@ export const APPS = [
     title: 'Resume',
     icon: DocumentIcon,
     width: 480,
+    minWidth: 380,
+    minHeight: 400,
     Content: Resume,
   },
   {
@@ -53,6 +59,8 @@ export const APPS = [
     title: 'Contact',
     icon: MailIcon,
     width: 360,
+    minWidth: 300,
+    minHeight: 190,
     Content: Contact,
   },
   {
@@ -62,6 +70,8 @@ export const APPS = [
     title: 'Now Playing',
     icon: MusicIcon,
     width: 420,
+    minWidth: 360,
+    minHeight: 430,
     Content: NowPlaying,
   },
 ]
@@ -72,6 +82,8 @@ const PROJECT_WINDOWS = projects.map((p) => ({
   id: `project:${p.id}`,
   title: p.title,
   width: 460,
+  minWidth: 380,
+  minHeight: 340,
   Content: () => <ProjectDetail project={p} />,
 }))
 
