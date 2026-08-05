@@ -14,20 +14,30 @@
 // never appear at all.)
 import { musicHeader, playlists } from '../../data/music.js'
 
-const EMBED_HEIGHT = 352
+// Minimum that still shows Spotify's own player chrome without it collapsing.
+// Also the height of the un-resized window, so the default look is unchanged.
+const MIN_EMBED_HEIGHT = 352
 
 export default function NowPlaying() {
   return (
-    <div className="space-y-3">
-      <p className="text-[13px] font-medium text-zinc-700">{musicHeader}</p>
+    // Full-height column so the embed stretches to fill a resized window.
+    <div className="flex h-full flex-col gap-3">
+      <p className="shrink-0 text-[13px] font-medium text-zinc-700">{musicHeader}</p>
 
       {playlists.map((pl) => (
-        <div key={pl.id} style={{ height: EMBED_HEIGHT }}>
+        // The iframe fills via absolute inset-0 rather than height:100%: until
+        // the window is resized this wrapper is a flex item with an indefinite
+        // height, so a percentage height would resolve to auto and the embed
+        // would collapse to its 150px intrinsic default.
+        <div
+          key={pl.id}
+          className="relative flex-1"
+          style={{ minHeight: MIN_EMBED_HEIGHT }}
+        >
           <iframe
             title="Spotify playlist"
             src={pl.embedUrl}
-            width="100%"
-            height={EMBED_HEIGHT}
+            className="absolute inset-0 h-full w-full"
             style={{ borderRadius: 12, border: 0 }}
             loading="lazy"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"

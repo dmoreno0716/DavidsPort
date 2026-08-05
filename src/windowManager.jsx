@@ -62,7 +62,13 @@ function initialPairLayout() {
 
 export function WindowManagerProvider({ children }) {
   const isMobile = useIsMobile()
-  // Open windows, each: { id, x, y }
+  // Open windows, each: { id, x, y, w, h }.
+  //
+  // w/h are null until the visitor resizes the window: until then it spawns at
+  // its configured width with content-driven height. Size lives here beside
+  // position so it survives re-renders and focus changes for as long as the
+  // window stays open — and is dropped by close(), so reopening restores the
+  // default size and position.
   const [windows, setWindows] = useState([])
   // z-order: ids ordered back → front; the last entry is focused.
   const [order, setOrder] = useState([])
@@ -76,10 +82,19 @@ export function WindowManagerProvider({ children }) {
   const open = useCallback((id, position) => {
     setWindows((ws) => {
       if (ws.some((w) => w.id === id)) return ws // already open → no duplicate
-      return [...ws, { id, ...(position ?? spawnPosition(ws.length)) }]
+      return [...ws, { id, ...(position ?? spawnPosition(ws.length)), w: null, h: null }]
     })
     // Whether newly opened or already open, bring it to the front.
     setOrder((o) => [...o.filter((w) => w !== id), id])
+  }, [])
+
+  // Called continuously while the resize handle is dragged. Clamping to the
+  // per-window minimums and the viewport happens in Window.jsx, which is where
+  // the live geometry is.
+  const resize = useCallback((id, { w, h }) => {
+    setWindows((ws) =>
+      ws.map((win) => (win.id === id ? { ...win, w, h } : win)),
+    )
   }, [])
 
   const close = useCallback((id) => {
@@ -121,8 +136,9 @@ export function WindowManagerProvider({ children }) {
       open,
       close,
       focus,
+      resize,
     }),
-    [windows, order, focusedId, openIds, open, close, focus],
+    [windows, order, focusedId, openIds, open, close, focus, resize],
   )
 
   return (
