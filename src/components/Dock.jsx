@@ -6,10 +6,21 @@
 // Enter/Space opens. The tooltip surfaces on focus as well as hover, and the
 // focused tile gets an amber ring.
 import { useWindowManager } from '../windowManager.jsx'
+import { useWallpaper } from '../wallpaper.jsx'
 import { APPS } from '../data/apps.jsx'
 
 export default function Dock() {
   const { open, isOpen } = useWindowManager()
+  const { isDark } = useWallpaper()
+
+  // Over a photo wallpaper the dock inverts to a dark frosted panel with light
+  // icons, so it reads as part of the OS rather than a white slab on a sunset.
+  const panel = isDark
+    ? 'border-white/15 bg-zinc-900/30'
+    : 'border-white/60 bg-white/55'
+  const tile = isDark
+    ? 'bg-white/15 text-white/85 ring-white/10 group-hover:bg-white/25 group-hover:text-white group-focus-visible:bg-white/25 group-focus-visible:text-white'
+    : 'bg-white/70 text-zinc-600 ring-black/5 group-hover:bg-white group-hover:text-zinc-900 group-focus-visible:bg-white group-focus-visible:text-zinc-900'
 
   return (
     // The positioning wrapper spans the full viewport width so the dock can be
@@ -21,7 +32,9 @@ export default function Dock() {
       aria-label="Dock"
       className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center"
     >
-      <ul className="pointer-events-auto flex items-end gap-1.5 rounded-2xl border border-white/60 bg-white/55 p-2 shadow-[0_16px_40px_-16px_rgba(24,24,27,0.35)] backdrop-blur-xl">
+      <ul
+        className={`pointer-events-auto flex items-end gap-1.5 rounded-2xl border p-2 shadow-[0_16px_40px_-16px_rgba(24,24,27,0.35)] backdrop-blur-xl transition-colors duration-300 ${panel}`}
+      >
         {APPS.map((app) => {
           const Icon = app.icon
           const active = isOpen(app.id)
@@ -43,7 +56,9 @@ export default function Dock() {
                 </span>
 
                 {/* Icon tile */}
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/70 text-zinc-600 ring-1 ring-black/5 transition-all duration-150 group-hover:bg-white group-hover:text-zinc-900 group-active:scale-95 group-focus-visible:bg-white group-focus-visible:text-zinc-900 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-amber-500">
+                <span
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl ring-1 transition-all duration-150 group-active:scale-95 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-amber-500 ${tile}`}
+                >
                   <Icon />
                 </span>
 

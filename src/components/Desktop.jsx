@@ -7,25 +7,20 @@ import { useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useWindowManager } from '../windowManager.jsx'
 import { useIsMobile } from '../useIsMobile.js'
+import { useWallpaper } from '../wallpaper.jsx'
+import { getWallpaper } from '../data/wallpapers.js'
 import { WINDOWS_BY_ID } from '../data/apps.jsx'
 import MenuBar from './MenuBar.jsx'
 import Dock from './Dock.jsx'
 import Window from './Window.jsx'
+import WallpaperPicker from './WallpaperPicker.jsx'
 import Sheet from './mobile/Sheet.jsx'
 import TabBar from './mobile/TabBar.jsx'
-
-// Subtle, unbusy wallpaper: a warm amber glow in the top-left over a
-// cream → pale-gray diagonal gradient.
-const wallpaper = {
-  backgroundImage: [
-    'radial-gradient(1100px 760px at 14% 8%, rgba(245,158,11,0.12), transparent 62%)',
-    'linear-gradient(135deg, #faf7f2 0%, #f1efee 55%, #e9e9ec 100%)',
-  ].join(', '),
-}
 
 export default function Desktop() {
   const { windows, focusedId, zIndexOf, focus, close } = useWindowManager()
   const isMobile = useIsMobile()
+  const { activeId, mountedIds, isDark } = useWallpaper()
   const constraintsRef = useRef(null)
 
   // Esc closes the focused window (or, on phones, the visible sheet). Bound on
@@ -41,7 +36,40 @@ export default function Desktop() {
   }, [focusedId, close])
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden" style={wallpaper}>
+    <div className="relative h-screen w-screen overflow-hidden bg-zinc-900">
+      {/* Wallpaper layers. Every wallpaper shown this session stays mounted at
+          opacity 0, so switching is a 300ms crossfade with no refetch and no
+          flash of empty background. The gradient is pure CSS; the photos cover
+          and center. Purely decorative, so hidden from assistive tech. */}
+      <div aria-hidden="true" className="absolute inset-0">
+        {mountedIds.map((id) => {
+          const w = getWallpaper(id)
+          return (
+            <div
+              key={id}
+              className="absolute inset-0 bg-cover bg-center transition-opacity duration-300 ease-out"
+              style={{
+                backgroundImage:
+                  w.type === 'image' ? `url(${w.src})` : w.backgroundImage,
+                opacity: id === activeId ? 1 : 0,
+              }}
+            />
+          )
+        })}
+
+        {/* Scrims: the photos are bright at the top (pink sky) and varied at the
+            bottom, so contrast for the menu bar and dock can't rely on the image
+            being dark. These fade in only for image wallpapers. */}
+        <div
+          className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent transition-opacity duration-300"
+          style={{ opacity: isDark ? 1 : 0 }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/35 to-transparent transition-opacity duration-300"
+          style={{ opacity: isDark ? 1 : 0 }}
+        />
+      </div>
+
       <MenuBar />
 
       {isMobile ? (
@@ -83,6 +111,7 @@ export default function Desktop() {
       )}
 
       {isMobile ? <TabBar /> : <Dock />}
+      <WallpaperPicker />
     </div>
   )
 }
