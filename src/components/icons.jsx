@@ -140,6 +140,17 @@ export function CloseIcon(props) {
   )
 }
 
+// Framed landscape — the wallpaper picker's toggle button.
+export function WallpaperIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="5" width="18" height="14" rx="2.5" />
+      <circle cx="8.5" cy="10" r="1.4" />
+      <path d="M4 16.5l4.5-4a1.8 1.8 0 0 1 2.4 0l3 2.7m0 0l1.6-1.4a1.8 1.8 0 0 1 2.3 0L20 15" />
+    </svg>
+  )
+}
+
 // Back chevron — used on mobile project-detail sheet headers to return to Projects.
 export function ChevronLeftIcon(props) {
   return (

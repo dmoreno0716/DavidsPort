@@ -50,14 +50,16 @@ npm run preview      # serve dist/ locally to check the real build
 
 ```
 src/
-├── App.jsx                  # providers (window manager, reduced-motion config)
+├── App.jsx                  # providers (wallpaper, window manager, reduced motion)
 ├── windowManager.jsx        # the core: open windows, z-order, focus, spawn positions
+├── wallpaper.jsx            # active wallpaper, localStorage persistence, light/dark chrome
 ├── useIsMobile.js           # matchMedia hook; drives the desktop ⇄ phone split
 ├── components/
-│   ├── Desktop.jsx          # shell: wallpaper, and desktop-vs-mobile layout choice
+│   ├── Desktop.jsx          # shell: wallpaper layers, and desktop-vs-mobile layout choice
 │   ├── MenuBar.jsx          # top bar: wordmark, focused app name, clock
 │   ├── Dock.jsx             # bottom dock (desktop)
 │   ├── Window.jsx           # one draggable, focusable window
+│   ├── WallpaperPicker.jsx  # bottom-right personalization control
 │   ├── icons.jsx            # hand-rolled line icons
 │   ├── mobile/              # Sheet + TabBar — the phone layout
 │   └── apps/                # the contents of each window
@@ -65,6 +67,7 @@ src/
     ├── apps.jsx             # window registry: dock apps + one window per project
     ├── projects.js          # project copy, links, screenshots, tech chips
     ├── profile.js           # name, bio, email, resume path
+    ├── wallpapers.js        # the three wallpaper options
     └── music.js             # Spotify playlist embed
 ```
 
@@ -98,7 +101,12 @@ breakpoint the draggable `Window` never mounts at all; a single full-screen
 - The Spotify embed — the heaviest third-party asset — costs nothing until it's
   wanted: its component only mounts while the Now Playing window is open, so the
   iframe and all of Spotify's own requests start when that window first opens
-  and never before. A first page load is 3 requests total.
+  and never before. A first page load is 4 requests total: document, JS, CSS,
+  and the resume PDF (Resume is one of the two windows opened on load).
+- Wallpaper photos are only fetched if one is actually selected — the default
+  gradient is pure CSS, and phones never download them at all. Once shown, a
+  wallpaper's layer stays mounted at `opacity: 0`, so switching back is a
+  300ms crossfade with no refetch.
 - Images use `loading="lazy"`, `decoding="async"`, and intrinsic dimensions
   inside fixed-aspect containers, so nothing shifts as they load.
 

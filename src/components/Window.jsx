@@ -10,6 +10,7 @@
 // no matter which element inside has focus.
 import { useEffect, useRef } from 'react'
 import { motion, useMotionValue, useDragControls } from 'framer-motion'
+import { useWallpaper } from '../wallpaper.jsx'
 
 // Vertical space the chrome reserves: the menu bar above the window layer, and
 // the floating dock at the bottom. A window is capped so it can never render
@@ -20,10 +21,21 @@ const DOCK_ZONE_PX = 96 // dock panel (~70px) + its bottom-4 offset + breathing 
 
 export default function Window({ app, spawn, focused, zIndex, constraintsRef, onFocus, onClose }) {
   const controls = useDragControls()
+  const { isDark } = useWallpaper()
   // Persist position across re-renders/focus changes via motion values.
   const x = useMotionValue(spawn.x)
   const y = useMotionValue(spawn.y)
   const ref = useRef(null)
+
+  // The window itself is unchanged on every wallpaper — only the shadow deepens,
+  // so a white panel still separates from a dark photo instead of floating flat.
+  const shadow = focused
+    ? isDark
+      ? '0 28px 70px -14px rgba(0,0,0,0.62), 0 10px 22px -10px rgba(0,0,0,0.45)'
+      : '0 18px 50px -12px rgba(24,24,27,0.28), 0 6px 16px -8px rgba(24,24,27,0.20)'
+    : isDark
+      ? '0 20px 52px -16px rgba(0,0,0,0.52), 0 6px 16px -10px rgba(0,0,0,0.38)'
+      : '0 12px 34px -14px rgba(24,24,27,0.20)'
 
   const { title, width, Content } = app
 
@@ -48,9 +60,7 @@ export default function Window({ app, spawn, focused, zIndex, constraintsRef, on
         width,
         zIndex,
         maxHeight: `calc(100vh - ${MENU_BAR_PX + spawn.y + DOCK_ZONE_PX}px)`,
-        boxShadow: focused
-          ? '0 18px 50px -12px rgba(24,24,27,0.28), 0 6px 16px -8px rgba(24,24,27,0.20)'
-          : '0 12px 34px -14px rgba(24,24,27,0.20)',
+        boxShadow: shadow,
       }}
       drag
       dragListener={false}
